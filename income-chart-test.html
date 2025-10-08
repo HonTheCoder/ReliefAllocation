@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Income Categorization Test</title>
+    <link rel="stylesheet" href="income-chart-styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .demo-data {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #3b82f6;
+        }
+        .demo-residents {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 15px;
+        }
+        .resident-card {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+        }
+        .resident-card.student {
+            border-left: 4px solid #3b82f6;
+        }
+        .resident-card.low {
+            border-left: 4px solid #ef4444;
+        }
+        .resident-card.mid {
+            border-left: 4px solid #f59e0b;
+        }
+        .resident-card.high {
+            border-left: 4px solid #10b981;
+        }
+        .chart-test-area {
+            height: 400px;
+            margin-top: 30px;
+        }
+        h1 {
+            color: #1f2937;
+            text-align: center;
+        }
+        h2 {
+            color: #374151;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 8px;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+</head>
+<body>
+    <h1>Income Categorization Test - Student Exclusion Fix</h1>
+    
+    <div class="test-container">
+        <h2>🎯 Problem Fixed</h2>
+        <p><strong>Issue:</strong> Students with Monthly Income = 0 were incorrectly being counted as "Low Income" residents in the pie chart.</p>
+        <p><strong>Solution:</strong> Students are now completely excluded from the income-based pie chart statistics and are listed separately below the chart as "Student List (Excluded from Income Stats)".</p>
+    </div>
+    
+    <div class="test-container">
+        <h2>📊 Demo Data</h2>
+        <div class="demo-data">
+            <h4>Sample Residents for Testing:</h4>
+            <div class="demo-residents">
+                <div class="resident-card student">
+                    <strong>Alice Student</strong><br>
+                    Student: ✓<br>
+                    Monthly Income: ₱0<br>
+                    <em>→ Student Category</em>
+                </div>
+                <div class="resident-card student">
+                    <strong>Bob Scholar</strong><br>
+                    Student: ✓<br>
+                    Monthly Income: ₱0<br>
+                    <em>→ Student Category</em>
+                </div>
+                <div class="resident-card low">
+                    <strong>Charlie Worker</strong><br>
+                    Student: ✗<br>
+                    Monthly Income: ₱5,000<br>
+                    <em>→ Low Income</em>
+                </div>
+                <div class="resident-card low">
+                    <strong>Diana Unemployed</strong><br>
+                    Student: ✗<br>
+                    Monthly Income: ₱0<br>
+                    <em>→ Low Income</em>
+                </div>
+                <div class="resident-card mid">
+                    <strong>Edward Manager</strong><br>
+                    Student: ✗<br>
+                    Monthly Income: ₱20,000<br>
+                    <em>→ Mid Income</em>
+                </div>
+                <div class="resident-card high">
+                    <strong>Fiona Executive</strong><br>
+                    Student: ✗<br>
+                    Monthly Income: ₱50,000<br>
+                    <em>→ High Income</em>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-container">
+        <h2>📈 Fixed Income Distribution Chart</h2>
+        <div class="chart-test-area">
+            <div class="chart-container">
+                <div class="chart-wrapper">
+                    <canvas id="testIncomeChart"></canvas>
+                </div>
+                <div class="chart-legend" id="testLegend"></div>
+            </div>
+        </div>
+        <div id="testStatsSummary" class="income-stats-summary"></div>
+    </div>
+    
+    <div class="test-container">
+        <h2>✅ Key Features</h2>
+        <ul>
+            <li><strong>Student Exclusion:</strong> Students are completely excluded from income-based pie chart calculations</li>
+            <li><strong>Separate Student List:</strong> Students appear in a dedicated list below the chart with their names and income values</li>
+            <li><strong>Pure Income Categories:</strong> Only non-students are categorized as Low (&lt;₱15,000), Mid (₱15,000-₱30,000), or High (&gt;₱30,000)</li>
+            <li><strong>Zero Income Handling:</strong> Non-students with ₱0 income are correctly categorized as "Low Income"</li>
+            <li><strong>Visual Legend:</strong> Interactive chart with clear color coding for income categories only</li>
+            <li><strong>Dual Statistics:</strong> Shows both income-based totals and grand totals including students</li>
+        </ul>
+    </div>
+    
+    <div class="test-container">
+        <h2>📋 Test Scenario</h2>
+        <div class="test-scenario">
+            <h3>Expected Results:</h3>
+            <ul>
+                <li><strong>Income Pie Chart:</strong> Shows only 3 slices (Low, Mid, High) - students completely excluded</li>
+                <li><strong>Low Income:</strong> 2 residents (Charlie at ₱5,000 + Diana at ₱0)</li>
+                <li><strong>Mid Income:</strong> 1 resident (Edward at ₱20,000)</li>
+                <li><strong>High Income:</strong> 1 resident (Fiona at ₱50,000)</li>
+                <li><strong>Student List Section:</strong> "Student List (Excluded from Income Stats)" with 2 students</li>
+                <li><strong>Student Details:</strong> Alice and Bob both showing ₱0 income</li>
+                <li><strong>Grand Total:</strong> 6 residents (4 in income chart + 2 students excluded)</li>
+            </ul>
+        </div>
+        
+        <div class="test-scenario">
+            <h3>🚀 Integration Steps:</h3>
+            <ol>
+                <li>Copy the updated <code>loadIncomeCategorizationChart</code> function from <code>chart.js</code></li>
+                <li>Ensure the student list section HTML is in your main statistics page</li>
+                <li>Include the CSS styles from <code>income-chart-styles.css</code></li>
+                <li>Test with real data by navigating to Statistics → Income Distribution</li>
+                <li>Verify students appear only in the separate list, not in pie chart</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        // Simulate the fixed categorization logic
+        const testResidents = [
+            { name: "Alice Student", isStudent: true, monthlyIncome: 0 },
+            { name: "Bob Scholar", isStudent: true, monthlyIncome: 0 },
+            { name: "Charlie Worker", isStudent: false, monthlyIncome: 5000 },
+            { name: "Diana Unemployed", isStudent: false, monthlyIncome: 0 },
+            { name: "Edward Manager", isStudent: false, monthlyIncome: 20000 },
+            { name: "Fiona Executive", isStudent: false, monthlyIncome: 50000 }
+        ];
+
+        function categorizeResidents(residents) {
+            const categories = { low: 0, mid: 0, high: 0 };
+            const students = [];
+
+            residents.forEach(r => {
+                const monthlyIncome = Number(r.monthlyIncome) || 0;
+                const isStudent = r.isStudent === true;
+
+                if (isStudent) {
+                    // Store students separately (excluded from chart)
+                    students.push({
+                        name: r.name,
+                        monthlyIncome: monthlyIncome
+                    });
+                } else {
+                    // Only categorize by income if NOT a student
+                    if (monthlyIncome === 0 || monthlyIncome < 15000) {
+                        categories.low += 1;
+                    } else if (monthlyIncome >= 15000 && monthlyIncome < 30000) {
+                        categories.mid += 1;
+                    } else {
+                        categories.high += 1;
+                    }
+                }
+            });
+
+            return { categories, students };
+        }
+
+        function createTestChart() {
+            const { categories, students } = categorizeResidents(testResidents);
+            
+            const labels = [];
+            const data = [];
+            const colors = [];
+
+            if (categories.low > 0) {
+                labels.push('Low Income');
+                data.push(categories.low);
+                colors.push('#ef4444');
+            }
+
+            if (categories.mid > 0) {
+                labels.push('Mid Income');
+                data.push(categories.mid);
+                colors.push('#f59e0b');
+            }
+
+            if (categories.high > 0) {
+                labels.push('High Income');
+                data.push(categories.high);
+                colors.push('#10b981');
+            }
+
+            const ctx = document.getElementById('testIncomeChart').getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: colors,
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = total > 0 ? ((context.parsed / total) * 100).toFixed(1) : 0;
+                                    return `${context.label}: ${context.parsed} residents (${percentage}%)`;
+                                }
+                            }
+                        },
+                        datalabels: {
+                            formatter: (value, ctx) => {
+                                const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                return `${percentage}%`;
+                            },
+                            color: "#ffffff",
+                            font: { weight: "bold", size: 14 }
+                        }
+                    }
+                },
+                plugins: [ChartDataLabels]
+            });
+
+            // Create legend
+            const legendEl = document.getElementById('testLegend');
+            legendEl.innerHTML = labels.map((label, i) => `
+                <div style="display:flex;align-items:center;margin:8px 0;padding:8px 12px;border-radius:6px;cursor:pointer;background:#fff;border:1px solid #e5e7eb;">
+                    <span style="background:${colors[i]};width:16px;height:16px;border-radius:4px;margin-right:12px;"></span>
+                    <span style="font-weight:500;color:#374151;font-size:0.875rem;">${label}: ${data[i]} residents</span>
+                </div>
+            `).join('');
+
+            // Update summary (income-based only)
+            const incomeBasedTotal = categories.low + categories.mid + categories.high;
+            const grandTotal = incomeBasedTotal + students.length;
+            const summaryEl = document.getElementById('testStatsSummary');
+            summaryEl.innerHTML = `
+                <div class="income-stats-grid">
+                    <div class="stat-item low">
+                        <div class="stat-number">${categories.low}</div>
+                        <div class="stat-label">Low Income</div>
+                    </div>
+                    <div class="stat-item mid">
+                        <div class="stat-number">${categories.mid}</div>
+                        <div class="stat-label">Mid Income</div>
+                    </div>
+                    <div class="stat-item high">
+                        <div class="stat-number">${categories.high}</div>
+                        <div class="stat-label">High Income</div>
+                    </div>
+                    <div class="stat-item total">
+                        <div class="stat-number">${incomeBasedTotal}</div>
+                        <div class="stat-label">Income-Based Total</div>
+                    </div>
+                    <div class="stat-item grand-total">
+                        <div class="stat-number">${grandTotal}</div>
+                        <div class="stat-label">All Residents</div>
+                    </div>
+                </div>
+            `;
+            
+            // Add student list below chart
+            if (students.length > 0) {
+                const studentListHTML = students.map(student => 
+                    `<div class="student-item">
+                        <span class="student-name">${student.name}</span>
+                        <span class="student-income">₱${student.monthlyIncome.toLocaleString()}</span>
+                    </div>`
+                ).join('');
+                
+                const studentSection = document.createElement('div');
+                studentSection.className = 'student-list-section';
+                studentSection.innerHTML = `
+                    <div class="student-list-header">
+                        <h4>📚 Student List (Excluded from Income Stats)</h4>
+                        <span class="student-count">${students.length} student${students.length === 1 ? '' : 's'}</span>
+                    </div>
+                    <div class="student-list-content">
+                        ${studentListHTML}
+                    </div>
+                `;
+                
+                // Insert after the summary
+                summaryEl.parentNode.insertBefore(studentSection, summaryEl.nextSibling);
+            }
+        }
+
+        // Initialize the test chart
+        document.addEventListener('DOMContentLoaded', createTestChart);
+    </script>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="theme-color" content="#1a73e8">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>Residents Management - Relief Allocation System</title>
+    
+    <!-- Fonts and Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="viewRes.css">
+    
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="image/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="image/favicon-32x32.png">
+    <link rel="icon" type="image/x-icon" href="image/favicon.ico">
+    <link rel="apple-touch-icon" href="image/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="image/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="image/android-chrome-512x512.png">
+    
+    <!-- External Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+
+    <div class="view-residents-container">
+        <!-- Header -->
+        <header class="view-residents-header">
+            <div class="header-content">
+                <h1 id="pageTitle" class="page-title">View Residents</h1>
+                <button class="back-button" onclick="goBack()">
+                    <div class="back-button-content">
+                        <span class="material-icons back-button-icon"></span>
+                        <div class="back-button-text-container">
+                            <span class="back-button-text">Back</span>
+                            <span class="back-button-subtitle"></span>
+                        </div>
+                    </div>
+                    <div class="back-button-ripple"></div>
+                    <div class="back-button-glow"></div>
+                </button>
+            </div>
+        </header>
+        
+        <!-- Main Content -->
+        <main class="view-residents-content">
+            <div class="residents-card">
+                <!-- Controls Section -->
+                <div class="residents-controls">
+                    <div class="controls-layout">
+                        <!-- Search Bar (Full Width, Top) -->
+                        <div class="search-section">
+                            <label class="control-label">Search Residents</label>
+                            <input 
+                                type="text" 
+                                id="globalSearchInput" 
+                                placeholder="Search residents by name, age, address, zone, or any details..."
+                                class="search-input-long"
+                            >
+                        </div>
+                        
+                        <div class="controls-row">
+                            <!-- Zone Filter (Left) -->
+                            <div class="control-group">
+                                <label class="control-label">Zone Filter</label>
+                                <div class="zone-filter-container">
+                                    <input 
+                                        type="text" 
+                                        id="modalZoneFilterInput" 
+                                        placeholder="Zone number (1, 2, 3...)"
+                                        class="zone-filter-input"
+                                    >
+                                    <button type="button" id="clearModalZoneFilter" class="clear-btn-small">
+                                        ✕ Clear Filter
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Export Buttons (Right) -->
+                            <div class="control-group">
+                                <label class="control-label">Export Options</label>
+                                <div class="export-buttons">
+                                    <button id="exportResidentsExcelBtn" class="export-btn excel">
+                                        📊 Excel
+                                    </button>
+                                    <button id="exportResidentsPDFBtn" class="export-btn pdf">
+                                        📄 PDF
+                                    </button>
+                                    <button id="printResidentsBtn" class="export-btn print">
+                                        🖨️ Print
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Table Section -->
+                <div class="residents-table-container">
+                    <div class="table-wrapper">
+                        <table id="viewResidentsTable">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Age</th>
+                                    <th>Address Zone</th>
+                                    <th>Household No</th>
+                                    <th>Gender</th>
+                                    <th>Household Status</th>
+                                    <th>House Material</th>
+                                    <th>Terrain</th>
+                                    <th>Family Members</th>
+                                    <th>Monthly Income</th>
+                                    <th>Aid History</th>
+                                    <th>Evacuee History</th>
+                                    <th>Work/Student Status</th>
+                                    <th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody id="viewResidentsTableBody">
+                                <!-- Data will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Required JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Navigation Function -->
+    <script>
+        function goBack() {
+            // Check if we came from main.html and have barangay parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const barangay = urlParams.get('barangay');
+            
+            if (document.referrer && document.referrer.includes('main.html')) {
+                // Go back to previous page if we came from main.html
+                window.history.back();
+            } else {
+                // Default redirect to main dashboard
+                window.location.href = 'main.html';
+            }
+        }
+    </script>
+    
+    <!-- Firebase and App Scripts -->
+    <script type="module" src="./firebase.js"></script>
+    <script type="module" src="viewRes.js"></script>
+</body>
+</html>

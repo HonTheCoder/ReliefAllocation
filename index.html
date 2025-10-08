@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+  <meta name="description"
+    content="Official MSWD (Municipal Social Welfare and Development) Portal – services, programs, and support for the community." />
+  <title>Relief Allocation App</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="background-config.css" />
+  <link rel="stylesheet" href="landingpage.css" />
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="16x16" href="image/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="image/favicon-32x32.png">
+  <link rel="icon" type="image/x-icon" href="image/favicon.ico">
+
+  <!-- For Apple devices -->
+  <link rel="apple-touch-icon" href="image/apple-touch-icon.png">
+
+  <!-- For Android/Chrome -->
+  <link rel="icon" type="image/png" sizes="192x192" href="image/android-chrome-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="image/android-chrome-512x512.png">
+  <style>
+    /* Minimal, page-local overrides for a formal landing page */
+    :root {
+      --deep-blue: #1e3a8a;
+      --deep-blue-2: #0f295f;
+      --muted-green: #2f855a;
+      --card-bg: rgba(255, 255, 255, 0.88);
+      --text-dark: #1f2937;
+      --text-muted: #4b5563;
+      --border: rgba(15, 23, 42, 0.08);
+    }
+
+    body {
+      min-height: 100vh;
+      /* Background photo with institutional overlay for readability */
+      background: 
+        linear-gradient(rgba(15, 30, 60, 0.70), rgba(15, 30, 60, 0.70)),
+        url('pictures/building1.jpg') center center / cover no-repeat fixed;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Center wrapper spans full width like reference */
+    .landing-wrapper {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 24px 40px;
+    }
+
+    /* Remove boxed card look; keep inner grid */
+    .center-card {
+      width: 100%;
+      max-width: 1280px;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      padding: 0 12px;
+    }
+
+    /* Two-column hero layout */
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 36px;
+      align-items: center;
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Show logo near heading */
+    .mswd-logo {
+      display: inline-block;
+      width: 72px;
+      height: auto;
+      vertical-align: middle;
+      margin-right: 12px;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.2));
+      border-radius: 12px;
+      background: rgba(255,255,255,0.7);
+      padding: 6px;
+    }
+
+    .center-card h1 {
+      margin: 0 0 12px 0;
+      color: #ffffff;
+      font-size: clamp(2.4rem, 1.2rem + 3.6vw, 4rem);
+      line-height: 1.15;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .center-card h1 .accent { color: #2563eb; }
+
+    .center-card .slogan {
+      margin: 0 0 24px 0;
+      color: #ffffff;
+      font-size: 1.06rem;
+      letter-spacing: 0.2px;
+      max-width: 56ch;
+    }
+
+    .center-card .login-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 160px;
+      padding: 12px 20px;
+      border-radius: 10px;
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      font-weight: 600;
+      text-decoration: none;
+      text-align: center;
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+      transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+    }
+
+    .center-card .login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 22px rgba(37, 99, 235, 0.45);
+      background: #1d4ed8;
+    }
+
+    /* Right-side image styling */
+    .hero-text { text-align: left; }
+
+    .hero-figure {
+      display: block;
+    }
+    .hero-figure img {
+      width: 100%;
+      height: auto;
+      border-radius: 18px;
+      box-shadow: 0 24px 60px rgba(2,6,23,0.28);
+    }
+
+    /* Footer */
+    .lp-footer {
+      padding: 16px;
+      text-align: center;
+      font-size: 12px;
+      color: #9ca3af; /* light gray */
+    }
+
+    /* Dedicated background layer (keeps original branding visible) */
+    .page-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        linear-gradient(rgba(7, 25, 64, 0.7), rgba(7, 25, 64, 0.7)),
+        url('pictures/building1.jpg') center center/cover no-repeat fixed;
+      filter: blur(2px);
+      transform: scale(1.02);
+    }
+
+    @media (max-width: 640px) {
+      .center-card { padding: 0 12px; }
+      .center-card h1 { font-size: clamp(1.6rem, 1.1rem + 4.2vw, 2.2rem); }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Background layer for landing page -->
+  <div class="page-bg" aria-hidden="true"></div>
+  <!-- Loading Screen -->
+  <div id="loadingScreen" class="loading-screen">
+    <div class="loading-content">
+      <div class="loading-logo">
+        <div class="logo-icon">
+          <span class="material-icons">volunteer_activism</span>
+        </div>
+        <h1 class="loading-title">Relief Allocation System</h1>
+        <p class="loading-subtitle">Loading...</p>
+      </div>
+      <div class="loading-spinner">
+        <div class="spinner-ring"></div>
+      </div>
+      <p class="loading-text">Initializing...</p>
+    </div>
+    <div class="loading-pattern"></div>
+  </div>
+
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header" role="banner">
+    <div class="container nav-wrapper">
+      <div class="brand-logos" aria-label="MSWD logo">
+        <img src="pictures/logo1.png" alt="MSWD Logo" class="logo" />
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <div class="landing-wrapper">
+      <div class="center-card" role="region" aria-label="ReliefPoint Landing">
+        <div class="hero-grid">
+          <div class="hero-text">
+            <h1><img src="pictures/logo1.png" alt="MSWD Logo" class="mswd-logo" />Welcome to the Official <span class="accent">ReliefPoint</span></h1>
+            <p class="slogan">Municipal Social Welfare and Development – Serving our community with compassion, integrity, and dedication to improve the quality of life for all citizens.</p>
+            <a class="login-btn" href="main.html" aria-label="Login">Login</a>
+          </div>
+          <figure class="hero-figure" aria-hidden="true">
+            <img src="pictures/building1.jpg" alt="Municipal Building" />
+          </figure>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="lp-footer">
+    © 2025 ReliefPoint | A Capstone Project of Bicol University – College of Science, Information Technology Department.
+  </footer>
+
+  <script>
+    (function() {
+        
+        // Hide loading screen after page loads
+        function hideLoadingScreen() {
+          const loadingScreen = document.getElementById('loadingScreen');
+          if (loadingScreen) {
+            setTimeout(() => {
+              loadingScreen.classList.add('fade-out');
+              setTimeout(() => {
+                loadingScreen.style.display = 'none';
+              }, 300);
+            }, 500); // Increased delay to ensure everything loads
+          }
+        }
+        
+        // Try multiple events to ensure loading screen is hidden
+        window.addEventListener('load', hideLoadingScreen);
+        document.addEventListener('DOMContentLoaded', function() {
+          setTimeout(hideLoadingScreen, 1000); // Fallback after 1 second
+        });
+        
+        // Allow clicking loading screen to dismiss it
+        const loadingScreen = document.getElementById('loadingScreen');
+        if (loadingScreen) {
+          loadingScreen.addEventListener('click', hideLoadingScreen);
+          loadingScreen.style.cursor = 'pointer';
+          
+          // Add a small instruction
+          const loadingText = loadingScreen.querySelector('.loading-text');
+          if (loadingText) {
+            setTimeout(() => {
+              loadingText.textContent = 'Click to continue...';
+            }, 2000);
+          }
+        }
+        
+        // Update copyright year
+        const yearSpan = document.getElementById('year');
+        if (yearSpan) {
+          yearSpan.textContent = new Date().getFullYear();
+        }
+      })();
+  </script>
+
+</body>
+
+</html>

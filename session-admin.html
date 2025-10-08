@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session Management Configuration</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        .session-config-panel {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 2rem auto;
+        }
+        
+        .config-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            color: #1e40af;
+        }
+        
+        .config-header .material-icons {
+            font-size: 2rem;
+        }
+        
+        .config-section {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+        
+        .config-label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        .config-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        
+        .config-toggle {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 24px;
+            background: #d1d5db;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .toggle-switch.active {
+            background: #3b82f6;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+        
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(26px);
+        }
+        
+        .config-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+        
+        .status-message {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+        
+        .status-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+        
+        .status-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+    </style>
+</head>
+<body>
+    <div class="session-config-panel">
+        <div class="config-header">
+            <span class="material-icons">security</span>
+            <h2>Smart Session Management Configuration</h2>
+        </div>
+        
+        <div id="statusMessage" class="status-message"></div>
+        
+        <div class="config-section">
+            <label class="config-label">Maximum Session Inactivity (minutes)</label>
+            <input type="number" id="maxInactiveTime" class="config-input" value="15" min="5" max="60">
+            <small style="color: #6b7280;">Users will be automatically logged out after this period of inactivity.</small>
+        </div>
+        
+        <div class="config-section">
+            <label class="config-label">Maximum Session Duration (hours)</label>
+            <input type="number" id="maxSessionAge" class="config-input" value="24" min="1" max="72">
+            <small style="color: #6b7280;">Maximum time a session can remain active regardless of activity.</small>
+        </div>
+        
+        <div class="config-section">
+            <label class="config-label">Activity Update Interval (seconds)</label>
+            <input type="number" id="heartbeatInterval" class="config-input" value="30" min="15" max="300">
+            <small style="color: #6b7280;">How often user activity is recorded in the database.</small>
+        </div>
+        
+        <div class="config-section">
+            <div class="config-toggle">
+                <div class="toggle-switch" id="multipleSessionsToggle" onclick="toggleMultipleSessions()">
+                    <div class="toggle-slider"></div>
+                </div>
+                <div>
+                    <div class="config-label">Allow Multiple Sessions</div>
+                    <small style="color: #6b7280;">Allow users to be logged in from multiple devices simultaneously.</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="config-buttons">
+            <button class="btn btn-secondary" onclick="resetToDefaults()">
+                <span class="material-icons">refresh</span>
+                Reset to Defaults
+            </button>
+            <button class="btn btn-primary" onclick="saveConfiguration()">
+                <span class="material-icons">save</span>
+                Save Configuration
+            </button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { getSessionConfig, updateSessionConfig } from './firebase.js';
+        
+        let currentConfig = {};
+        
+        // Load current configuration on page load
+        async function loadCurrentConfig() {
+            try {
+                currentConfig = await getSessionConfig();
+                
+                // Update UI with current values
+                document.getElementById('maxInactiveTime').value = Math.round(currentConfig.MAX_INACTIVE_TIME / 1000 / 60);
+                document.getElementById('maxSessionAge').value = Math.round(currentConfig.MAX_SESSION_AGE / 1000 / 60 / 60);
+                document.getElementById('heartbeatInterval').value = Math.round(currentConfig.HEARTBEAT_INTERVAL / 1000);
+                
+                const multipleSessionsToggle = document.getElementById('multipleSessionsToggle');
+                if (currentConfig.ALLOW_MULTIPLE_SESSIONS) {
+                    multipleSessionsToggle.classList.add('active');
+                }
+                
+                showStatus('Configuration loaded successfully', 'success');
+            } catch (error) {
+                console.error('Error loading config:', error);
+                showStatus('Error loading configuration', 'error');
+            }
+        }
+        
+        // Save configuration
+        window.saveConfiguration = async function() {
+            try {
+                const maxInactiveMinutes = parseInt(document.getElementById('maxInactiveTime').value);
+                const maxSessionHours = parseInt(document.getElementById('maxSessionAge').value);
+                const heartbeatSeconds = parseInt(document.getElementById('heartbeatInterval').value);
+                const allowMultiple = document.getElementById('multipleSessionsToggle').classList.contains('active');
+                
+                const newConfig = {
+                    MAX_INACTIVE_TIME: maxInactiveMinutes * 60 * 1000,
+                    MAX_SESSION_AGE: maxSessionHours * 60 * 60 * 1000,
+                    HEARTBEAT_INTERVAL: heartbeatSeconds * 1000,
+                    ALLOW_MULTIPLE_SESSIONS: allowMultiple
+                };
+                
+                await updateSessionConfig(newConfig);
+                currentConfig = { ...currentConfig, ...newConfig };
+                
+                showStatus('Configuration saved successfully! Changes will take effect within 5 minutes.', 'success');
+            } catch (error) {
+                console.error('Error saving config:', error);
+                showStatus('Error saving configuration', 'error');
+            }
+        };
+        
+        // Reset to defaults
+        window.resetToDefaults = function() {
+            document.getElementById('maxInactiveTime').value = 15;
+            document.getElementById('maxSessionAge').value = 24;
+            document.getElementById('heartbeatInterval').value = 30;
+            document.getElementById('multipleSessionsToggle').classList.remove('active');
+        };
+        
+        // Toggle multiple sessions
+        window.toggleMultipleSessions = function() {
+            const toggle = document.getElementById('multipleSessionsToggle');
+            toggle.classList.toggle('active');
+        };
+        
+        // Show status message
+        function showStatus(message, type) {
+            const statusEl = document.getElementById('statusMessage');
+            statusEl.textContent = message;
+            statusEl.className = `status-message status-${type}`;
+            statusEl.style.display = 'block';
+            
+            setTimeout(() => {
+                statusEl.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Load configuration when page loads
+        loadCurrentConfig();
+    </script>
+</body>
+</html>
