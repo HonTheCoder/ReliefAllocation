@@ -16,7 +16,13 @@
     "tsc:build": "tsc",
     "type-check": "tsc --noEmit --watch"
   },
-  "keywords": ["relief", "allocation", "management", "firebase", "web-app"],
+  "keywords": [
+    "relief",
+    "allocation",
+    "management",
+    "firebase",
+    "web-app"
+  ],
   "author": "Relief Allocation Team",
   "license": "ISC",
   "description": "A comprehensive relief goods allocation and management system",
@@ -26,8 +32,8 @@
   "devDependencies": {
     "@babel/core": "^7.23.6",
     "@babel/preset-env": "^7.23.6",
-    "@types/jest": "^29.5.5",
-    "@types/node": "^20.8.0",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^20.19.19",
     "@typescript-eslint/eslint-plugin": "^6.7.0",
     "@typescript-eslint/parser": "^6.7.0",
     "babel-jest": "^29.7.0",
@@ -44,12 +50,23 @@
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "jsdom",
-    "setupFilesAfterEnv": ["<rootDir>/tests/setup.js"],
-    "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json"],
+    "setupFilesAfterEnv": [
+      "<rootDir>/tests/setup.js"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json"
+    ],
     "transform": {
-      "^.+\\.(ts|tsx)$": ["ts-jest", {
-        "useESM": true
-      }],
+      "^.+\\.(ts|tsx)$": [
+        "ts-jest",
+        {
+          "useESM": true
+        }
+      ],
       "^.+\\.(js|jsx)$": "babel-jest"
     },
     "testMatch": [
@@ -66,6 +83,21 @@
       "!**/*.d.ts"
     ],
     "coverageDirectory": "coverage",
-    "coverageReporters": ["html", "text", "lcov"]
-  }
+    "coverageReporters": [
+      "html",
+      "text",
+      "lcov"
+    ]
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HonTheCoder/ReliefAllocation.git"
+  },
+  "bugs": {
+    "url": "https://github.com/HonTheCoder/ReliefAllocation/issues"
+  },
+  "homepage": "https://github.com/HonTheCoder/ReliefAllocation#readme"
 }
